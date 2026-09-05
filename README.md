@@ -1,4 +1,4 @@
-# Personal Gemini Journal 🚀
+# Personal Gemini Journal
 
 An authenticated, secure multi-turn reflection journal powered by Gemini API, Google Cloud Run, Firebase Authentication, and Cloud Firestore. Built for the Accelerate AI with Cloud Run APAC Ideathon.
 
