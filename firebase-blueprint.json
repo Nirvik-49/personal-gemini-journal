@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "JournalEntry": {
+      "title": "JournalEntry",
+      "description": "A private journaling session entry with Gemini dialogue, summary, and themes",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the authenticated user who owns this journal entry"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Session title"
+        },
+        "messages": {
+          "type": "array",
+          "description": "Multi-turn conversation turns between the user and Gemini"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 2500,
+          "description": "Automatically generated AI summary and reflection insights"
+        },
+        "mood": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Detected tone or mood of the journaling session"
+        },
+        "keyThemes": {
+          "type": "array",
+          "description": "Key topics or themes discussed"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp string"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp string"
+        }
+      },
+      "required": ["userId", "title", "messages", "summary", "createdAt", "updatedAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private user account profile",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "User unique identifier"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "User avatar image URL"
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "description": "Last sign in timestamp"
+        }
+      },
+      "required": ["uid", "email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Isolated profile document for the authenticated user"
+    },
+    "/users/{userId}/journals/{journalId}": {
+      "schema": "JournalEntry",
+      "description": "Isolated journaling entries, chat transcripts, and AI summaries belonging strictly to the user"
+    }
+  }
+}

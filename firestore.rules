@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny all requests unless explicitly permitted
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // User private profile document
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Isolated per-user journals sub-collection
+    match /users/{userId}/journals/{journalId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Any nested document under user's journals collection
+    match /users/{userId}/journals/{document=**} {
+      allow read, write: if isOwner(userId);
+    }
+  }
+}

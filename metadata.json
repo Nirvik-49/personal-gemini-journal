@@ -1,0 +1,9 @@
+{
+  "name": "Personal Gemini Journal",
+  "description": "A private, secure multi-turn journaling application powered by Gemini with automated entry summaries persisted to Cloud Firestore.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
