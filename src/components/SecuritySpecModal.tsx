@@ -83,6 +83,21 @@ export const SecuritySpecModal: React.FC<SecuritySpecModalProps> = ({ isOpen, on
               Gemini API keys are never exposed to client browsers or bundled into client code. Requests to Gemini models are proxied strictly through server-side Express routes with prompt sanitization and length bounds to prevent injection attacks.
             </p>
           </div>
+
+          {/* Section 4 */}
+          <div className="bg-[#F9F9FB] border border-[#EEEEEE] rounded-xl p-4">
+            <div className="flex items-center gap-2 font-medium text-[#1A1A1A] mb-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#7C3AED]" />
+              <span>4. External Webhook Security & Resilience</span>
+            </div>
+            <p className="text-gray-600 leading-relaxed mb-2">
+              Webhook dispatches to Discord/Slack execute asynchronously in strict non-blocking try-catch wrappers. Outgoing payloads are sanitized against log injection, previews are capped to prevent data leakage, and network failures never block or fail the primary journal transaction.
+            </p>
+            <div className="flex items-center gap-1.5 text-emerald-700 text-[11px] font-medium">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Zero-impact delivery guarantee: Journaling flows continue smoothly even if webhooks fail.</span>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}

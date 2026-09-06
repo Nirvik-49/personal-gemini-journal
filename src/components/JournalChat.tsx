@@ -13,11 +13,14 @@ import {
   AlertTriangle,
   Mic,
   MicOff,
+  Webhook,
 } from 'lucide-react';
 import { JournalEntry, JournalMessage } from '../types';
 import { JOURNAL_PROMPTS } from '../data/prompts';
 import { sendChatMessage, generateEntrySummary } from '../services/geminiService';
 import { saveJournalEntry } from '../services/journalService';
+import { sendWebhookNotification, getActiveWebhookUrl } from '../services/webhookService';
+import { WebhookSettingsModal } from './WebhookSettingsModal';
 import { User } from '../firebase';
 
 interface JournalChatProps {
@@ -40,6 +43,8 @@ export const JournalChat: React.FC<JournalChatProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(true);
+  const [isWebhookModalOpen, setIsWebhookModalOpen] = useState(false);
+  const [webhookNotice, setWebhookNotice] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -282,6 +287,27 @@ export const JournalChat: React.FC<JournalChatProps> = ({
       setSaveStatus('saved');
       onEntrySaved();
       setTimeout(() => setSaveStatus('idle'), 3000);
+
+      // Trigger asynchronous webhook notification to Discord/Slack (strict non-blocking)
+      const sentimentTag = summaryResult.mood || currentEntry.mood || 'Reflective';
+      const previewText =
+        summaryResult.summary ||
+        currentEntry.messages
+          .filter((m) => m.role === 'user')
+          .map((m) => m.text)
+          .join(' ') ||
+        'New reflection session recorded.';
+
+      sendWebhookNotification(previewText, sentimentTag)
+        .then((res) => {
+          if (res.success) {
+            setWebhookNotice('Dispatched to webhook');
+            setTimeout(() => setWebhookNotice(null), 5000);
+          }
+        })
+        .catch((webhookErr) => {
+          console.warn('Asynchronous webhook dispatch background failure:', webhookErr);
+        });
     } catch (err: unknown) {
       console.error('Failed to generate summary:', err);
       const msg = err instanceof Error ? err.message : 'Failed to synthesize summary.';
@@ -339,6 +365,24 @@ export const JournalChat: React.FC<JournalChatProps> = ({
             )}
 
             <button
+              type="button"
+              id="webhook-settings-button"
+              onClick={() => setIsWebhookModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-[#F9F9FB] text-gray-700 hover:bg-[#F3F4F6] border border-[#EEEEEE] transition-colors cursor-pointer"
+              title="Configure Discord / Slack Webhook URL"
+            >
+              <Webhook
+                className={`w-3.5 h-3.5 ${
+                  getActiveWebhookUrl() ? 'text-[#7C3AED]' : 'text-gray-400'
+                }`}
+              />
+              <span className="hidden sm:inline">Webhook</span>
+              {getActiveWebhookUrl() && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              )}
+            </button>
+
+            <button
               id="generate-summary-button"
               onClick={handleGenerateSummary}
               disabled={isSummarizing || currentEntry.messages.length === 0}
@@ -372,12 +416,20 @@ export const JournalChat: React.FC<JournalChatProps> = ({
                   AI Reflection Summary
                 </span>
               </div>
-              {currentEntry.mood && (
-                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-[#7C3AED] text-xs font-medium border border-[#EDE9FE] shadow-2xs">
-                  <Smile className="w-3 h-3 text-[#7C3AED]" />
-                  <span>Mood: {currentEntry.mood}</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                {webhookNotice && (
+                  <span className="flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full animate-in fade-in">
+                    <Webhook className="w-3 h-3 text-emerald-600" />
+                    <span>{webhookNotice}</span>
+                  </span>
+                )}
+                {currentEntry.mood && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white text-[#7C3AED] text-xs font-medium border border-[#EDE9FE] shadow-2xs">
+                    <Smile className="w-3 h-3 text-[#7C3AED]" />
+                    <span>Mood: {currentEntry.mood}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-line mb-3">
@@ -619,6 +671,12 @@ export const JournalChat: React.FC<JournalChatProps> = ({
           Your thoughts are saved to your secure Cloud Firestore vault.
         </p>
       </footer>
+
+      {/* External Webhook Settings Modal */}
+      <WebhookSettingsModal
+        isOpen={isWebhookModalOpen}
+        onClose={() => setIsWebhookModalOpen(false)}
+      />
     </div>
   );
 };
