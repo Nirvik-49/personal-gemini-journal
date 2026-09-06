@@ -1,4 +1,4 @@
-# Personal Gemini Journal 🚀
+# Personal Gemini Journal
 > **Accelerate AI with Cloud Run APAC Ideathon 2026 Submission**
 
 Personal Gemini Journal is a secure, production-grade journaling web application built to transform personal reflection through conversational AI, real-time voice input, and automated mood analytics. Powered by Google AI Studio, deployed on Google Cloud Run, authenticated via Firebase Auth, and backed by Cloud Firestore, the application ensures complete per-user privacy and data isolation.
@@ -83,10 +83,39 @@ service cloud.firestore {
    - Google Cloud SDK (gcloud CLI) installed and authenticated
    - An active Google Cloud Platform (GCP) project with billing enabled
 
-1. Local Setup
+
+# 1. Local Setup
 Clone the repository and install dependencies:
 ```
 git clone [https://github.com/Nirvik-49/personal-gemini-journal.git](https://github.com/Nirvik-49/personal-gemini-journal.git)
 cd personal-gemini-journal
 npm 
 ```
+
+Start the local development server:
+```
+npm run dev
+```
+
+# 2. Manual Deployment to Google Cloud Run
+
+To deploy the application directly from your local environment or Cloud Shell to Google Cloud Run, execute the following commands:
+```
+# Set your target Google Cloud project
+gcloud config set project YOUR_PROJECT_ID
+
+# Deploy the application from source code
+gcloud run deploy personal-gemini-journal \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated
+```
+
+During deployment:
+
+When prompted to enable required APIs (Cloud Build, Artifact Registry, Cloud Run), type Y.
+
+Once the build completes, the gcloud CLI will output your live HTTPS Service URL.
+
+🏷️ Challenge Hashtag
+#AccelerateAIwithCloudRun
