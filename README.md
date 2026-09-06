@@ -78,13 +78,13 @@ service cloud.firestore {
 
 ## 🚀 Local Development & Deployment Steps
 
-# Prerequisites
+## Prerequisites
    - Node.js (v18 or higher)
    - Google Cloud SDK (gcloud CLI) installed and authenticated
    - An active Google Cloud Platform (GCP) project with billing enabled
 
 
-# 1. Local Setup
+### 1. Local Setup
 Clone the repository and install dependencies:
 ```
 git clone [https://github.com/Nirvik-49/personal-gemini-journal.git](https://github.com/Nirvik-49/personal-gemini-journal.git)
@@ -97,7 +97,7 @@ Start the local development server:
 npm run dev
 ```
 
-# 2. Manual Deployment to Google Cloud Run
+### 2. Manual Deployment to Google Cloud Run
 
 To deploy the application directly from your local environment or Cloud Shell to Google Cloud Run, execute the following commands:
 ```
@@ -117,5 +117,5 @@ When prompted to enable required APIs (Cloud Build, Artifact Registry, Cloud Run
 
 Once the build completes, the gcloud CLI will output your live HTTPS Service URL.
 
-🏷️ Challenge Hashtag
+## 🏷️ Challenge Hashtag
 #AccelerateAIwithCloudRun
