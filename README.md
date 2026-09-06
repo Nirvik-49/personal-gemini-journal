@@ -78,7 +78,7 @@ service cloud.firestore {
 
 ## 🚀 Local Development & Deployment Steps
 
-## Prerequisites
+### Prerequisites
    - Node.js (v18 or higher)
    - Google Cloud SDK (gcloud CLI) installed and authenticated
    - An active Google Cloud Platform (GCP) project with billing enabled
