@@ -86,10 +86,10 @@ service cloud.firestore {
 
 ### 1. Local Setup
 Clone the repository and install dependencies:
-```
+```bash
 git clone [https://github.com/Nirvik-49/personal-gemini-journal.git](https://github.com/Nirvik-49/personal-gemini-journal.git)
 cd personal-gemini-journal
-npm 
+npm install
 ```
 
 Start the local development server:
